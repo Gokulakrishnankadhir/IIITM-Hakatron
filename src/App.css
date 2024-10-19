@@ -1,0 +1,149 @@
+/* Root Container */
+#root {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* Logo Styling */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.App-header{
+  width: 100%;
+}
+
+img {
+  width: 150px;
+  margin-bottom: 20px;
+  margin-right: auto;
+}
+
+/* Flex container for top section */
+.top {
+  display: flex;
+  justify-content: space-between; /* Ensure logo and title have space between them */
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Title section */
+.topic h2 {
+  margin: 0;
+}
+
+/* Hover effect for logo */
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+/* Keyframes for Spinning Animation */
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+/* Card Styling */
+.card {
+  padding: 2em;
+  margin: 1rem auto;
+  max-width: 100%;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Text styling */
+.read-the-docs {
+  color: #888;
+}
+
+h2 {
+  color: rgb(11, 11, 11);
+}
+
+/* Responsive Styling */
+
+/* Tablet Styling (Medium Screens) */
+@media screen and (max-width: 768px) {
+  #root {
+    padding: 1.5rem;
+  }
+
+  .logo {
+    height: 5em; /* Slightly smaller logo for medium screens */
+    padding: 1em;
+  }
+
+  .card {
+    padding: 1.5em;
+    max-width: 95%; /* Make cards occupy a larger part of the screen */
+  }
+
+  h2 {
+    font-size: 1.8em;
+    text-align: center;
+  }
+
+  .top {
+    justify-content: center; /* Center align the logo and title */
+    text-align: center;
+  }
+
+  img {
+    margin-right: 0;
+  }
+}
+
+/* Mobile Styling (Small Screens) */
+@media screen and (max-width: 480px) {
+  #root {
+    padding: 1rem;
+  }
+
+  .logo {
+    height: 4em; /* Smaller logo for mobile screens */
+    padding: 0.5em;
+  }
+
+  .card {
+    padding: 1em;
+    max-width: 100%; /* Allow cards to fill the entire width of the screen */
+  }
+
+  h2 {
+    font-size: 1.5em;
+    margin-bottom: 1rem;
+  }
+
+  .read-the-docs {
+    font-size: 0.9em; /* Smaller font for readability on mobile */
+  }
+
+  .top {
+    flex-direction: column; /* Stack the logo and title vertically */
+  }
+
+  img {
+    margin-right: 0;
+    margin-bottom: 10px; /* Add spacing between stacked elements */
+  }
+}

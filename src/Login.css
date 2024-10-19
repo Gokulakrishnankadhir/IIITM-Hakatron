@@ -1,0 +1,156 @@
+/* Set a background image for the body */
+body {
+  font-family: 'Roboto', sans-serif;
+  background: url('../src/assets/banner-2.jpg') no-repeat center center fixed;
+  background-size: cover;
+  height: 120vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Blur and adjust the login container */
+.login-container {
+  width: 400px;
+  max-width: 90%;
+  padding: 60px;
+  background: rgba(255, 255, 255, 0.15); /* White color with transparency */
+  backdrop-filter: blur(10px); /* Blur effect */
+  border-radius: 15px;
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+h2 {
+  color: #f7f3f3;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%; /* Ensure the form takes full width of the container */
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left; 
+  margin-right: 100px;
+  padding-right: 50px;/* Align labels to the left */
+}
+.input-group h3{
+  margin-left: 100px;
+  color: rgb(91, 89, 89);
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: -8px;
+  color: #f6eded;
+}
+
+input[type="text"],
+input[type="password"] {
+  padding: 1px;
+ 
+  border-radius: 8px;
+  border: 1px solid #b0bec5;
+  background-color: #ffffff;
+  color: black;
+  font-size: 16px;
+  padding-left: 100px;
+  transition: all 0.3s ease-in-out;
+  width: 100%; /* Make inputs span full width */
+  box-sizing: border-box;
+  
+  margin-right: 200px; /* Include padding in width calculation */
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  border-color: #ffffff;
+  outline: none;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.login-button {
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #10e333;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  width: 100%; /* Full width button */
+  box-sizing: border-box;
+}
+
+.login-button:hover {
+  background-color: #023e8a;
+}
+
+.login-button:active {
+  background-color: #0da2f3;
+  box-shadow: 0 5px #015b8f;
+  transform: translateY(2px);
+}
+
+.login-button:focus {
+  outline: none;
+}
+
+/* Responsive styling */
+
+/* Tablet styling (medium screens) */
+@media screen and (max-width: 768px) {
+  .login-container {
+    width: 80%;
+    padding: 20px;
+  }
+
+  h2 {
+    font-size: 1.6em;
+    margin-bottom: 25px;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    font-size: 15px;
+    padding: 10px;
+  }
+
+  .login-button {
+    font-size: 17px;
+    padding: 10px;
+  }
+}
+
+/* Mobile styling (small screens) */
+@media screen and (max-width: 480px) {
+  .login-container {
+    width: 90%;
+    padding: 20px;
+  }
+
+  h2 {
+    font-size: 1.4em;
+    margin-bottom: 20px;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .login-button {
+    font-size: 16px;
+    padding: 8px;
+  }
+}

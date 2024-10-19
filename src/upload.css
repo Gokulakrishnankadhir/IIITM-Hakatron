@@ -1,0 +1,95 @@
+body {
+  background-color: #ffffff; /* Set background to white */
+  font-family: 'Arial', sans-serif;
+  color: #333333;
+  height: 1300px; /* Set default text color */
+}
+.App
+
+.upload-container {
+  width: 1500px;
+  margin: 3rem auto;
+  padding: 2.5rem;
+  border-radius: 15px;
+  background-color: #faf8f8; /* White background for the container */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+h2 {
+  text-align: center;
+  color: #333333;
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+p {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666666;
+  margin-bottom: 1rem;
+}
+.group{
+  width: 500px;
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #444444;
+}
+
+.input-group input {
+  width: 500px;
+  padding: 14px;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #0056b3;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.upload-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: #28a745;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.upload-button:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+.message {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #28a745;
+}
+
+.error-message {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #dc3545;
+}
+.ipfs-link{
+  margin-top: 00px;
+}
