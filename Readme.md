@@ -62,7 +62,7 @@ To run this project locally, follow these steps:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/Akash1912-hub/IIT-KANPUR-PROJECT/main/traffic_light.git
+   git clone https://github.com/Gokulakrishnankadhir/IIITM-Hakatron.git
    ```
 
 2. **Navigate to the project directory**:
@@ -90,7 +90,7 @@ To run the traffic signal optimization model, follow these steps:
 
 1. **Run the model**:
    ```bash
-   python traffic_signal_model.py
+   python output.py
    ```
 
 2. **Provide input**:
