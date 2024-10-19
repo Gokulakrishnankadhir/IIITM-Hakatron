@@ -3,748 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trip Planner</title>
-    
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
-    <nav>
-        <div class="menu-btn" id="menuBtn">
-            <div class="menu-btn__burger"></div>
-        </div>
-        <div class="logo">TransportOptimize</div>
-    </nav>
-
-    <div class="sidebar" id="sidebar">
-        <ul>
-            <li><a href="#maintenance"><i class="fas fa-tools"></i> Maintenance</a></li>
-            <li><a href="#demand"><i class="fas fa-chart-line"></i> Demand</a></li>
-            <li><a href="co2_prediction.html" id="co2-link"><i class="fas fa-leaf"></i> CO2</a></li>
-        </ul>
-    </div>
-
-    <div class="container mt-5">
-         <h1 class="mt-5">Demand Prediction</h1>
-        <form action="/plan_trip" method="post" class="mt-4">
-            <div class="form-group">
-                <label for="destination">Destination:</label>
-                <input type="text" class="form-control w-100" id="destination" name="destination" required>
-            </div>
-            <div class="form-group">
-                <label for="passenger_count">Number of Passengers:</label>
-                <input type="number" class="form-control" id="passenger_count" name="passenger_count" required min="1">
-            </div>
-            <button type="submit" class="btn btn-primary">Plan Trip</button>
-        </form>
-    </div>
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Contact Us</h3>
-                <p>Email: info@transportoptimize.com</p>
-                <p>Phone: +1 (555) 123-4567</p>
-            </div>
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2023 TransportOptimize. All rights reserved.</p>
-        </div>
-    </footer>
+    <title>Full Page Map with Floating Inputs</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
-body {
-    background-color: #f0f2f5;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-#result{
-    color: #036308;
-    font-size: 25px;
-    margin-top: 20px    ;
-    
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-}
-/* Select Element Styles */
-select {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    margin-bottom: 15px; /* Space between select and next element */
-    appearance: none; /* Remove default styling in some browsers */
-    background: #fff url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABHElEQVR42mJ0z8A0YQYGABoU0GnDMLkBRBMzA4gJwD4gRkiRzCTGeAYn/10LkjhYIAHgCwlE2w9cFJvAvUQNm8HMAEzAMwT2DBogVEKwMEiAcAjMBBAGUMZ8gAcQItBwTAF4ghQERQQAwTgxYAAwDgW8mI5wTAAAAABJRU5ErkJggg==') no-repeat right 10px center; /* Dropdown arrow */
-    background-size: 15px; /* Size of the dropdown arrow */
-}
-
-select:focus {
-    border-color: #66afe9; /* Change border color on focus */
-    outline: none; /* Remove default outline */
-}
-
-nav {
-    background-color: #1a73e8;
-    color: white;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
-}
-
-.menu-btn {
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 40px;
-    height: 40px;
-    transition: all .5s ease-in-out;
-}
-
-.menu-btn__burger {
-    width: 25px;
-    height: 3px;
-    background: #fff;
-    border-radius: 5px;
-    transition: all .5s ease-in-out;
-}
-
-.menu-btn__burger::before,
-.menu-btn__burger::after {
-    content: '';
-    position: absolute;
-    width: 25px;
-    height: 3px;
-    background: #fff;
-    border-radius: 5px;
-    transition: all .5s ease-in-out;
-}
-
-.menu-btn__burger::before {
-    transform: translateY(-8px);
-}
-
-.menu-btn__burger::after {
-    transform: translateY(8px);
-}
-
-/* ANIMATION */
-.menu-btn.open .menu-btn__burger {
-    transform: translateX(-50px);
-    background: transparent;
-}
-
-.menu-btn.open .menu-btn__burger::before {
-    transform: rotate(45deg) translate(35px, -35px);
-}
-
-.menu-btn.open .menu-btn__burger::after {
-    transform: rotate(-45deg) translate(35px, 35px);
-}
-
-.logo {
-    font-size: 1.5rem;
-    font-weight: 600;
-}
-
-.sidebar {
-    position: fixed;
-    left: -250px;
-    width: 250px;
-    height: 100%;
-    background-color: #fff;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    z-index: 999;
-}
-
-.sidebar.active {
-    left: 0;
-}
-
-.sidebar ul {
-    list-style-type: none;
-    padding: 2rem 0;
-}
-
-.sidebar ul li {
-    padding: 1rem 2rem;
-}
-
-.sidebar ul li a {
-    color: #333;
-    text-decoration: none;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-}
-
-.sidebar ul li a i {
-    margin-right: 10px;
-    font-size: 1.2rem;
-}
-
-.sidebar ul li a:hover {
-    color: #1a73e8;
-}
-
-.content {
-    margin-top: 5rem;
-    padding: 2rem;
-    flex-grow: 1;
-}
-
-h1 {
-    color: #333;
-    margin-bottom: 2rem;
-}
-
-.input-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    max-width: 800px;
-    margin: 0 auto 1rem;
-}
-
-input[type="text"] {
-    flex: 2;
-   width: 700px;
-    padding: 0.8rem;
-  
-    border: none;
-    border-radius: 5px;
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-
-input[type="text"]:focus {
-    outline: none;
-    box-shadow: 0 2px 10px rgba(26,115,232,0.3);
-}
-
-.submit-btn {
-    display: block;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto 2rem;
-    padding: 0.8rem;
-    background-color: #1a73e8;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.submit-btn:hover {
-    background-color: #1557b0;
-}
-
-.real-time-data {
-    max-width: 800px;
-    margin: 0 auto 2rem;
-    padding: 1.5rem;
-    background-color: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(10px);
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.real-time-data h2 {
-    color: #1a73e8;
-    margin-bottom: 1rem;
-}
-
-#realTimeContent {
-    min-height: 100px;
-}
-
-.about-us {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    margin-bottom: 2rem;
-    margin-top: 500px;
-}
-
-.about-us h2 {
-    color: #1a73e8;
-    margin-bottom: 1rem;
-}
-
-.about-us p {
-    margin-bottom: 1rem;
-    line-height: 1.6;
-}
-
-.chatbot-icon {
-    position: fixed;
-    right: 30px;
-    bottom: 20%;
-    background-color: #1a73e8;
-    color: white;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    transition: all 0.3s ease;
-}
-
-.chatbot-icon:hover {
-    transform: scale(1.1);
-}
-h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-
-
-footer {
-    background-color: #333;
-    color: #fff;
-    padding: 2rem 0;
-    margin-top: 100px;
-}
-
-.footer-content {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.footer-section {
-    margin-bottom: 1rem;
-}
-
-.footer-section h3 {
-    margin-bottom: 1rem;
-}
-
-.footer-section ul {
-    list-style-type: none;
-}
-
-.footer-section ul li {
-    margin-bottom: 0.5rem;
-}
-
-.footer-section a {
-    color: #fff;
-    text-decoration: none;
-}
-
-.social-icons a {
-    font-size: 1.5rem;
-    margin-right: 1rem;
-}
-
-.footer-bottom {
-    text-align: center;
-    padding-top: 1rem;
-    margin-top: 1rem;
-    border-top: 1px solid #555;
-}
-
-@media (max-width: 768px) {
-    .input-container {
-        flex-direction: column;
-    }
-    
-    input[type="text"] {
-        width: 100%;
-    }
-
-    .footer-content {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .footer-section {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-}           
-    </style>
-<script>
-     
-        const menuBtn = document.getElementById('menuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const chatbotIcon = document.getElementById('chatbotIcon');
-
-        menuBtn.addEventListener('click', function() {
-            menuBtn.classList.toggle('open');
-            sidebar.classList.toggle('active');
-        });
-
-        document.addEventListener('click', function(event) {
-            if (!sidebar.contains(event.target) && !menuBtn.contains(event.target)) {
-                sidebar.classList.remove('active');
-                menuBtn.classList.remove('open');
-            }
-        });
-
-        sidebar.addEventListener('click', function(event) {
-            event.stopPropagation();
-        });
-
-        chatbotIcon.addEventListener('click', function() {
-            alert('Chatbot functionality coming soon!');
-        });
-   
-</script>
-
-</body>
-</html>
--->
-<!--
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trip Planner</title>
-    
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
-    <nav>
-        <div class="menu-btn" id="menuBtn">
-            <div class="menu-btn__burger"></div>
-        </div>
-        <div class="logo">TransportOptimize</div>
-    </nav>
-
-    <div class="sidebar" id="sidebar">
-        <ul>
-            <li><a href="#maintenance"><i class="fas fa-tools"></i> Maintenance</a></li>
-            <li><a href="#demand"><i class="fas fa-chart-line"></i> Demand</a></li>
-            <li><a href="co2_prediction.html" id="co2-link"><i class="fas fa-leaf"></i> CO2</a></li>
-        </ul>
-    </div>
-
-    <div class="container mt-5">
-         <h1 class="mt-5 text-center">Demand Prediction</h1>
-        <form action="/plan_trip" method="post" class="mt-4">
-            <div class="form-group">
-                <label for="destination">Destination:</label>
-                <input type="text" class="form-control w-100" id="destination" name="destination" required>
-            </div>
-            <div class="form-group">
-                <label for="passenger_count">Number of Passengers:</label>
-                <input type="number" class="form-control" id="passenger_count" name="passenger_count" required min="1">
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Plan Trip</button>
-        </form>
-    </div>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Contact Us</h3>
-                <p>Email: info@transportoptimize.com</p>
-                <p>Phone: +1 (555) 123-4567</p>
-            </div>
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2023 TransportOptimize. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
-
-        * {
+        body, html {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background-color: #f0f2f5;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        nav {
-            background-color: #1a73e8;
-            color: white;
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .menu-btn {
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 40px;
-            height: 40px;
-            transition: all .5s ease-in-out;
-        }
-
-        .menu-btn__burger {
-            width: 25px;
-            height: 3px;
-            background: #fff;
-            border-radius: 5px;
-            transition: all .5s ease-in-out;
-        }
-
-        .menu-btn__burger::before,
-        .menu-btn__burger::after {
-            content: '';
-            position: absolute;
-            width: 25px;
-            height: 3px;
-            background: #fff;
-            border-radius: 5px;
-            transition: all .5s ease-in-out;
-        }
-
-        .menu-btn__burger::before {
-            transform: translateY(-8px);
-        }
-
-        .menu-btn__burger::after {
-            transform: translateY(8px);
-        }
-
-        .menu-btn.open .menu-btn__burger {
-            transform: translateX(-50px);
-            background: transparent;
-        }
-
-        .menu-btn.open .menu-btn__burger::before {
-            transform: rotate(45deg) translate(35px, -35px);
-        }
-
-        .menu-btn.open .menu-btn__burger::after {
-            transform: rotate(-45deg) translate(35px, 35px);
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .sidebar {
-            position: fixed;
-            left: -250px;
-            width: 250px;
             height: 100%;
-            background-color: #fff;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            z-index: 999;
+            font-family: Arial, sans-serif;
         }
-
-        .sidebar.active {
+        #map {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
             left: 0;
         }
-
-        .sidebar ul {
-            list-style-type: none;
-            padding: 2rem 0;
+        .input-container {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 90%;
         }
-
-        .sidebar ul li {
-            padding: 1rem 2rem;
-        }
-
-        .sidebar ul li a {
-            color: #333;
-            text-decoration: none;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
+        .input-group {
             display: flex;
             align-items: center;
-        }
-
-        .sidebar ul li a i {
-            margin-right: 10px;
-            font-size: 1.2rem;
-        }
-
-        .sidebar ul li a:hover {
-            color: #1a73e8;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 2rem;
-        }
-
-        input[type="text"], input[type="number"] {
-            padding: 0.8rem;
-            border: none;
-            border-radius: 5px;
+            margin-bottom: 10px;
             background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            font-size: 1rem;
-            width: 100%;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
+            border-radius: 4px;
+            overflow: hidden;
         }
-
-        input[type="text"]:focus, input[type="number"]:focus {
-            outline: none;
-            box-shadow: 0 2px 10px rgba(26, 115, 232, 0.3);
-        }
-
-        .btn-primary {
-            background-color: #1a73e8;
-            border-color: #1a73e8;
-        }
-
-        .btn-primary:hover {
-            background-color: #1557b0;
-            border-color: #1557b0;
-        }
-
-        footer {
-            background-color: #333;
-            color: #fff;
-            padding: 2rem 0;
-            margin-top: 50px;
-        }
-
-        .footer-content {
+        .input-icon {
+            padding: 10px;
             display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            max-width: 1200px;
-            margin: 0 auto;
+            align-items: center;
+            justify-content: center;
         }
-
-        .footer-section {
-            margin-bottom: 1rem;
+        .input-icon svg {
+            width: 20px;
+            height: 20px;
         }
-
-        .footer-section h3 {
-            margin-bottom: 1rem;
+        input[type="text"] {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            padding: 10px;
         }
-
-        .footer-section ul {
-            list-style-type: none;
+        .swap-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            margin-left: 10px;
         }
-
-        .footer-section ul li {
-            margin-bottom: 0.5rem;
+        .swap-button svg {
+            width: 20px;
+            height: 20px;
         }
-
-        .footer-section a {
-            color: #fff;
-            text-decoration: none;
-        }
-
-        .footer-bottom {
+        button {
+            width: 100%;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 10px;
             text-align: center;
-            padding-top: 1rem;
-            margin-top: 1rem;
-            border-top: 1px solid #555;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #1765cc;
+        }
+        .error {
+            color: #d93025;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .leaflet-routing-container {
+            background-color: white;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .leaflet-routing-alt {
+            max-height: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div class="input-container">
+        <div class="input-group">
+            <div class="input-icon">
+                <svg fill="#1a73e8" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="8"/>
+                </svg>
+            </div>
+            <input type="text" id="origin" placeholder="Your location" aria-label="Starting point">
+        </div>
+        <div class="input-group">
+            <div class="input-icon">
+                <svg fill="#d93025" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+            </div>
+            <input type="text" id="destination" placeholder="Choose destination" aria-label="Destination">
+            <button class="swap-button" onclick="swapLocations()" aria-label="Swap locations">
+                <svg viewBox="0 0 24 24" fill="#5f6368">
+                    <path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/>
+                </svg>
+            </button>
+        </div>
+        <button onclick="optimizeRoute()">Get directions</button>
+        <p id="error" class="error" role="alert" aria-live="assertive"></p>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <script>
+        let map = L.map('map').setView([20.5937, 78.9629], 5);
+        let routingControl;
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        async function geocode(address) {
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
+                const data = await response.json();
+                if (data.length > 0) {
+                    return {
+                        lat: parseFloat(data[0].lat),
+                        lng: parseFloat(data[0].lon)
+                    };
+                } else {
+                    throw new Error("Location not found");
+                }
+            } catch (error) {
+                throw new Error("Geocoding failed");
+            }
         }
 
-        @media (max-width: 768px) {
-            .input-container {
-                flex-direction: column;
+        async function optimizeRoute() {
+            const originInput = document.getElementById("origin");
+            const destinationInput = document.getElementById("destination");
+            const errorElement = document.getElementById("error");
+
+            try {
+                errorElement.textContent = "";
+                const [origin, destination] = await Promise.all([
+                    geocode(originInput.value),
+                    geocode(destinationInput.value)
+                ]);
+
+                if (routingControl) {
+                    map.removeControl(routingControl);
+                }
+
+                routingControl = L.Routing.control({
+                    waypoints: [
+                        L.latLng(origin.lat, origin.lng),
+                        L.latLng(destination.lat, destination.lng)
+                    ],
+                    routeWhileDragging: true,
+                    lineOptions: {
+                        styles: [{ color: '#1a73e8', weight: 6 }]
+                    },
+                    show: true,
+                    addWaypoints: true,
+                    draggableWaypoints: true,
+                    fitSelectedRoutes: true,
+                    showAlternatives: false
+                }).addTo(map);
+
+                routingControl.on('routeselected', function(e) {
+                    var route = e.route;
+                    console.log('Selected route:', route);
+                });
+
+                map.fitBounds([
+                    [origin.lat, origin.lng],
+                    [destination.lat, destination.lng]
+                ]);
+
+                toggleDirectionButton(false); // Hide the button when route is displayed
+            } catch (error) {
+                errorElement.textContent = "Unable to find one or both locations. Please check your input and try again.";
             }
+        }
 
-            .footer-content {
-                flex-direction: column;
-                align-items: center;
+        function swapLocations() {
+            const originInput = document.getElementById("origin");
+            const destinationInput = document.getElementById("destination");
+            [originInput.value, destinationInput.value] = [destinationInput.value, originInput.value];
+            toggleDirectionButton(true);
+        }
+
+        function toggleDirectionButton(show) {
+            const directionButton = document.querySelector('button[onclick="optimizeRoute()"]');
+            const routingContainer = document.querySelector('.leaflet-routing-container');
+            directionButton.style.display = show ? 'block' : 'none';
+            if (routingContainer) {
+                routingContainer.style.display = show ? 'none' : 'block';
             }
+        }
 
-            .footer-section {
-                text-align: center;
-                margin-bottom: 2rem;
-            }
-        }     
-    </style>
-
-    <script>
-        const menuBtn = document.getElementById('menuBtn');
-        const sidebar = document.getElementById('sidebar');
-
-        menuBtn.addEventListener('click', function() {
-            menuBtn.classList.toggle('open');
-            sidebar.classList.toggle('active');
-        });
-
-        document.addEventListener('click', function(event) {
-            if (!sidebar.contains(event.target) && !menuBtn.contains(event.target)) {
-                sidebar.classList.remove('active');
-                menuBtn.classList.remove('open');
-            }
-        });
-
-        // Ensure smooth scrolling for anchor links
-        $('a[href^="#"]').on('click', function(e) {
-            e.preventDefault();
-            var target = this.hash;
-            $('html, body').animate({
-                scrollTop: $(target).offset().top
-            }, 600);
-        });
+        document.getElementById("origin").addEventListener("input", () => toggleDirectionButton(true));
+        document.getElementById("destination").addEventListener("input", () => toggleDirectionButton(true));
     </script>
 </body>
-</html>
--->
+</html>-->
+
 <!DOCTYPE html>
 
 <html lang="en">
@@ -755,860 +238,449 @@ footer {
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Trip Planner</title>
+  <title>Full Page Map with Floating Inputs</title>
 
-  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    body, html {
+
+      margin: 0;
+
+      padding: 0;
+
+      height: 100%;
+
+      font-family: Arial, sans-serif;
+
+    }
+
+    #map {
+
+      height: 100%;
+
+      width: 100%;
+
+      position: absolute;
+
+      top: 0;
+
+      left: 0;
+
+    }
+
+    .input-container {
+
+      position: absolute;
+
+      top: 10px;
+
+      left: 50%;
+
+      transform: translateX(-50%);
+
+      z-index: 1000;
+
+      background-color: rgba(255, 255, 255, 0.9);
+
+      padding: 10px;
+
+      border-radius: 8px;
+
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+
+      max-width: 400px;
+
+      width: 90%;
+
+    }
+
+    .input-group {
+
+      display: flex;
+
+      align-items: center;
+
+      margin-bottom: 10px;
+
+      background-color: #fff;
+
+      border-radius: 4px;
+
+      overflow: hidden;
+
+    }
+
+    .input-icon {
+
+      padding: 10px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+    }
+
+    .input-icon svg {
+
+      width: 20px;
+
+      height: 20px;
+
+    }
+
+    input[type="text"] {
+
+      flex-grow: 1;
+
+      border: none;
+
+      outline: none;
+
+      font-size: 16px;
+
+      padding: 10px;
+
+    }
+
+    .swap-button {
+
+      background: none;
+
+      border: none;
+
+      cursor: pointer;
+
+      padding: 5px;
+
+      margin-left: 10px;
+
+    }
+
+    .swap-button svg {
+
+      width: 20px;
+
+      height: 20px;
+
+    }
+
+    button {
+
+      width: 100%;
+
+      background-color: #1a73e8;
+
+      color: white;
+
+      border: none;
+
+      padding: 10px;
+
+      text-align: center;
+
+      font-size: 16px;
+
+      cursor: pointer;
+
+      border-radius: 4px;
+
+      transition: background-color 0.3s;
+
+    }
+
+    button:hover {
+
+      background-color: #1765cc;
+
+    }
+
+    .error {
+
+      color: #d93025;
+
+      margin-top: 10px;
+
+      font-size: 14px;
+
+    }
+
+    .leaflet-routing-container {
+
+      background-color: white;
+
+      padding: 10px;
+
+      margin-top: 10px;
+
+      border-radius: 5px;
+
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+      max-height: 300px;
+
+      overflow-y: auto;
+
+    }
+
+    .leaflet-routing-alt {
+
+      max-height: none;
+
+    }
+
+  </style>
 
 </head>
 
 <body>
 
-  <nav>
+  <div id="map"></div>
 
-    <div class="menu-btn" id="menuBtn">
+  <div class="input-container">
 
-      <div class="menu-btn__burger"></div>
+    <div class="input-group">
+
+      <div class="input-icon">
+
+        <svg fill="#1a73e8" viewBox="0 0 24 24">
+
+          <circle cx="12" cy="12" r="8"/>
+
+        </svg>
+
+      </div>
+
+      <input type="text" id="origin" placeholder="Your location" aria-label="Starting point">
 
     </div>
 
-    <div class="logo">TransportOptimize</div>
+    <div class="input-group">
 
-  </nav>
+      <div class="input-icon">
 
+        <svg fill="#d93025" viewBox="0 0 24 24">
 
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
 
-  <div class="sidebar" id="sidebar">
+        </svg>
 
-    <ul>
-     <li><a href="/maintain"><i class="fas fa-tools"></i> Maintenance</a></li>
+      </div>
 
-      <li><a href="/maintain"><i class="fas fa-tools"></i> Maintenance</a></li>
+      <input type="text" id="destination" placeholder="Choose destination" aria-label="Destination">
 
-      <li><a href="/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+      <button class="swap-button" onclick="swapLocations()" aria-label="Swap locations">
 
-      <li><a href="{{ url_for('co2_prediction') }}" id="co2-link"><i class="fas fa-leaf"></i> CO2</a></li>
+        <svg viewBox="0 0 24 24" fill="#5f6368">
 
-    </ul>
+          <path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/>
+
+        </svg>
+
+      </button>
+
+    </div>
+
+    <button onclick="optimizeRoute()">Get directions</button>
+<a href="dashboard.html"><button>back</button></a>
+    <p id="error" class="error" role="alert" aria-live="assertive"></p>
 
   </div>
 
 
 
-  <div class="container mt-5">
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
-     <h1 class="mt-5">Demand Prediction</h1>
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
-    <form action="/plan_trip" method="post" class="mt-4">
+  <script>
 
-      <div class="form-group">
+    let map = L.map('map').setView([20.5937, 78.9629], 5);
 
-        <label for="destination">Destination:</label>
+    let routingControl;
 
-        <input type="text" class="form-control w-100" id="destination" name="destination" required>
 
-      </div>
 
-      <div class="form-group">
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
-        <label for="passenger_count">Number of Passengers:</label>
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 
-        <input type="number" class="form-control" id="passenger_count" name="passenger_count" required min="1">
+    }).addTo(map);
 
-      </div>
 
-      <button type="submit" class="btn btn-primary">Plan Trip</button>
 
-    </form>
+    async function geocode(address) {
 
-  </div>
+      try {
 
-  <footer>
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
 
-    <div class="footer-content">
+        const data = await response.json();
 
-      <div class="footer-section">
+        if (data.length > 0) {
 
-        <h3>Contact Us</h3>
+          return {
 
-        <p>Email: info@transportoptimize.com</p>
+            lat: parseFloat(data[0].lat),
 
-        <p>Phone: +1 (555) 123-4567</p>
+            lng: parseFloat(data[0].lon)
 
-      </div>
+          };
 
-      <div class="footer-section">
+        } else {
 
-        <h3>Quick Links</h3>
+          throw new Error("Location not found");
 
-        <ul>
+        }
 
-          <li><a href="#home">Home</a></li>
+      } catch (error) {
 
-          <li><a href="#services">Services</a></li>
-
-          <li><a href="#about">About</a></li>
-
-          <li><a href="#contact">Contact</a></li>
-
-        </ul>
-
-      </div>
-
-    </div>
-
-    <div class="footer-bottom">
-
-      <p>&copy; 2023 TransportOptimize. All rights reserved.</p>
-
-    </div>
-
-  </footer>
-
-  <style>
-
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
-
-
-
-* {
-
-  margin: 0;
-
-  padding: 0;
-
-  box-sizing: border-box;
-
-  font-family: 'Poppins', sans-serif;
-
-}
-
-
-
-body {
-
-  background-color: #f0f2f5;
-
-  min-height: 100vh;
-
-  display: flex;
-
-  flex-direction: column;
-
-}
-
-#result{
-
-  color: #036308;
-
-  font-size: 25px;
-
-  margin-top: 20px  ;
-
-  
-
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-
-}
-
-/* Select Element Styles */
-
-select {
-
-  padding: 10px;
-
-  border: 1px solid #ccc;
-
-  border-radius: 4px;
-
-  font-size: 16px;
-
-  margin-bottom: 15px; /* Space between select and next element */
-
-  appearance: none; /* Remove default styling in some browsers */
-
-  background: #fff url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABHElEQVR42mJ0z8A0YQYGABoU0GnDMLkBRBMzA4gJwD4gRkiRzCTGeAYn/10LkjhYIAHgCwlE2w9cFJvAvUQNm8HMAEzAMwT2DBogVEKwMEiAcAjMBBAGUMZ8gAcQItBwTAF4ghQERQQAwTgxYAAwDgW8mI5wTAAAAABJRU5ErkJggg==') no-repeat right 10px center; /* Dropdown arrow */
-
-  background-size: 15px; /* Size of the dropdown arrow */
-
-}
-
-
-
-select:focus {
-
-  border-color: #66afe9; /* Change border color on focus */
-
-  outline: none; /* Remove default outline */
-
-}
-
-
-
-nav {
-
-  background-color: #1a73e8;
-
-  color: white;
-
-  padding: 1rem;
-
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
-
-  position: fixed;
-
-  width: 100%;
-
-  top: 0;
-
-  z-index: 1000;
-
-}
-
-
-
-.menu-btn {
-
-  cursor: pointer;
-
-  display: flex;
-
-  justify-content: center;
-
-  align-items: center;
-
-  width: 40px;
-
-  height: 40px;
-
-  transition: all .5s ease-in-out;
-
-}
-
-
-
-.menu-btn__burger {
-
-  width: 25px;
-
-  height: 3px;
-
-  background: #fff;
-
-  border-radius: 5px;
-
-  transition: all .5s ease-in-out;
-
-}
-
-
-
-.menu-btn__burger::before,
-
-.menu-btn__burger::after {
-
-  content: '';
-
-  position: absolute;
-
-  width: 25px;
-
-  height: 3px;
-
-  background: #fff;
-
-  border-radius: 5px;
-
-  transition: all .5s ease-in-out;
-
-}
-
-
-
-.menu-btn__burger::before {
-
-  transform: translateY(-8px);
-
-}
-
-
-
-.menu-btn__burger::after {
-
-  transform: translateY(8px);
-
-}
-
-
-
-/* ANIMATION */
-
-.menu-btn.open .menu-btn__burger {
-
-  transform: translateX(-50px);
-
-  background: transparent;
-
-}
-
-
-
-.menu-btn.open .menu-btn__burger::before {
-
-  transform: rotate(45deg) translate(35px, -35px);
-
-}
-
-
-
-.menu-btn.open .menu-btn__burger::after {
-
-  transform: rotate(-45deg) translate(35px, 35px);
-
-}
-
-
-
-.logo {
-
-  font-size: 1.5rem;
-
-  font-weight: 600;
-
-}
-
-
-
-.sidebar {
-
-  position: fixed;
-
-  left: -250px;
-
-  width: 250px;
-
-  height: 100%;
-
-  background-color: #fff;
-
-  transition: all 0.3s ease;
-
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-
-  z-index: 999;
-
-}
-
-
-
-.sidebar.active {
-
-  left: 0;
-
-}
-
-
-
-.sidebar ul {
-
-  list-style-type: none;
-
-  padding: 2rem 0;
-
-}
-
-
-
-.sidebar ul li {
-
-  padding: 1rem 2rem;
-
-}
-
-
-
-.sidebar ul li a {
-
-  color: #333;
-
-  text-decoration: none;
-
-  font-size: 1.1rem;
-
-  transition: all 0.3s ease;
-
-  display: flex;
-
-  align-items: center;
-
-}
-
-
-
-.sidebar ul li a i {
-
-  margin-right: 10px;
-
-  font-size: 1.2rem;
-
-}
-
-
-
-.sidebar ul li a:hover {
-
-  color: #1a73e8;
-
-}
-
-
-
-.content {
-
-  margin-top: 5rem;
-
-  padding: 2rem;
-
-  flex-grow: 1;
-
-}
-
-
-
-h1 {
-
-  color: #333;
-
-  margin-bottom: 2rem;
-
-}
-
-
-
-.input-container {
-
-  display: flex;
-
-  flex-wrap: wrap;
-
-  gap: 1rem;
-
-  max-width: 800px;
-
-  margin: 0 auto 1rem;
-
-}
-
-
-
-input[type="text"] {
-
-  flex: 2;
-
-  width: 700px;
-
-  padding: 0.8rem;
-
- 
-
-  border: none;
-
-  border-radius: 5px;
-
-  background-color: #fff;
-
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-
-  font-size: 1rem;
-
-  transition: all 0.3s ease;
-
-}
-
-
-
-input[type="text"]:focus {
-
-  outline: none;
-
-  box-shadow: 0 2px 10px rgba(26,115,232,0.3);
-
-}
-
-
-
-.submit-btn {
-
-  display: block;
-
-  width: 100%;
-
-  max-width: 800px;
-
-  margin: 0 auto 2rem;
-
-  padding: 0.8rem;
-
-  background-color: #1a73e8;
-
-  color: white;
-
-  border: none;
-
-  border-radius: 5px;
-
-  font-size: 1rem;
-
-  cursor: pointer;
-
-  transition: background-color 0.3s ease;
-
-}
-
-
-
-.submit-btn:hover {
-
-  background-color: #1557b0;
-
-}
-
-
-
-.real-time-data {
-
-  max-width: 800px;
-
-  margin: 0 auto 2rem;
-
-  padding: 1.5rem;
-
-  background-color: rgba(255, 255, 255, 0.5);
-
-  backdrop-filter: blur(10px);
-
-  border-radius: 10px;
-
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
-}
-
-
-
-.real-time-data h2 {
-
-  color: #1a73e8;
-
-  margin-bottom: 1rem;
-
-}
-
-
-
-#realTimeContent {
-
-  min-height: 100px;
-
-}
-
-
-
-.about-us {
-
-  background-color: #fff;
-
-  padding: 2rem;
-
-  border-radius: 5px;
-
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-
-  margin-bottom: 2rem;
-
-  margin-top: 500px;
-
-}
-
-
-
-.about-us h2 {
-
-  color: #1a73e8;
-
-  margin-bottom: 1rem;
-
-}
-
-
-
-.about-us p {
-
-  margin-bottom: 1rem;
-
-  line-height: 1.6;
-
-}
-
-
-
-.chatbot-icon {
-
-  position: fixed;
-
-  right: 30px;
-
-  bottom: 20%;
-
-  background-color: #1a73e8;
-
-  color: white;
-
-  width: 60px;
-
-  height: 60px;
-
-  border-radius: 50%;
-
-  display: flex;
-
-  justify-content: center;
-
-  align-items: center;
-
-  font-size: 24px;
-
-  cursor: pointer;
-
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-
-  transition: all 0.3s ease;
-
-}
-
-
-
-.chatbot-icon:hover {
-
-  transform: scale(1.1);
-
-}
-
-h1 {
-
-  font-size: 24px;
-
-  margin-bottom: 20px;
-
-  text-align: center;
-
-}
-
-
-
-
-
-
-
-footer {
-
-  background-color: #333;
-
-  color: #fff;
-
-  padding: 2rem 0;
-
-  margin-top: 100px;
-
-}
-
-
-
-.footer-content {
-
-  display: flex;
-
-  justify-content: space-around;
-
-  flex-wrap: wrap;
-
-  max-width: 1200px;
-
-  margin: 0 auto;
-
-}
-
-
-
-.footer-section {
-
-  margin-bottom: 1rem;
-
-}
-
-
-
-.footer-section h3 {
-
-  margin-bottom: 1rem;
-
-}
-
-
-
-.footer-section ul {
-
-  list-style-type: none;
-
-}
-
-
-
-.footer-section ul li {
-
-  margin-bottom: 0.5rem;
-
-}
-
-
-
-.footer-section a {
-
-  color: #fff;
-
-  text-decoration: none;
-
-}
-
-
-
-.social-icons a {
-
-  font-size: 1.5rem;
-
-  margin-right: 1rem;
-
-}
-
-
-
-.footer-bottom {
-
-  text-align: center;
-
-  padding-top: 1rem;
-
-  margin-top: 1rem;
-
-  border-top: 1px solid #555;
-
-}
-
-
-
-@media (max-width: 768px) {
-
-  .input-container {
-
-    flex-direction: column;
-
-  }
-
-  
-
-  input[type="text"] {
-
-    width: 100%;
-
-  }
-
-
-
-  .footer-content {
-
-    flex-direction: column;
-
-    align-items: center;
-
-  }
-
-
-
-  .footer-section {
-
-    text-align: center;
-
-    margin-bottom: 2rem;
-
-  }
-
-}     
-
-  </style>
-
-<script>
-
-   
-
-    const menuBtn = document.getElementById('menuBtn');
-
-    const sidebar = document.getElementById('sidebar');
-
-    const chatbotIcon = document.getElementById('chatbotIcon');
-
-
-
-    menuBtn.addEventListener('click', function() {
-
-      menuBtn.classList.toggle('open');
-
-      sidebar.classList.toggle('active');
-
-    });
-
-
-
-    document.addEventListener('click', function(event) {
-
-      if (!sidebar.contains(event.target) && !menuBtn.contains(event.target)) {
-
-        sidebar.classList.remove('active');
-
-        menuBtn.classList.remove('open');
+        throw new Error("Geocoding failed");
 
       }
 
-    });
+    }
 
 
 
-    sidebar.addEventListener('click', function(event) {
+    async function optimizeRoute() {
 
-      event.stopPropagation();
+      const originInput = document.getElementById("origin");
 
-    });
+      const destinationInput = document.getElementById("destination");
 
-
-
-    chatbotIcon.addEventListener('click', function() {
-
-      alert('Chatbot functionality coming soon!');
-
-    });
-
-  
-
-</script>
+      const errorElement = document.getElementById("error");
 
 
+
+      try {
+
+        errorElement.textContent = "";
+
+        const [origin, destination] = await Promise.all([
+
+          geocode(originInput.value),
+
+          geocode(destinationInput.value)
+
+        ]);
+
+
+
+        if (routingControl) {
+
+          map.removeControl(routingControl);
+
+        }
+
+
+
+        routingControl = L.Routing.control({
+
+          waypoints: [
+
+            L.latLng(origin.lat, origin.lng),
+
+            L.latLng(destination.lat, destination.lng)
+
+          ],
+
+          routeWhileDragging: true,
+
+          lineOptions: {
+
+            styles: [{ color: '#1a73e8', weight: 6 }]
+
+          },
+
+          show: true,
+
+          addWaypoints: true,
+
+          draggableWaypoints: true,
+
+          fitSelectedRoutes: true,
+
+          showAlternatives: false
+
+        }).addTo(map);
+
+
+
+        routingControl.on('routeselected', function(e) {
+
+          var route = e.route;
+
+          console.log('Selected route:', route);
+
+        });
+
+
+
+        map.fitBounds([
+
+          [origin.lat, origin.lng],
+
+          [destination.lat, destination.lng]
+
+        ]);
+
+
+
+        toggleDirectionButton(false); // Hide the button when route is displayed
+
+      } catch (error) {
+
+        errorElement.textContent = "Unable to find one or both locations. Please check your input and try again.";
+
+      }
+
+    }
+
+
+
+    function swapLocations() {
+
+      const originInput = document.getElementById("origin");
+
+      const destinationInput = document.getElementById("destination");
+
+      [originInput.value, destinationInput.value] = [destinationInput.value, originInput.value];
+
+      toggleDirectionButton(true);
+
+    }
+
+
+
+    function toggleDirectionButton(show) {
+
+      const directionButton = document.querySelector('button[onclick="optimizeRoute()"]');
+
+      const routingContainer = document.querySelector('.leaflet-routing-container');
+
+      directionButton.style.display = show ? 'block' : 'none';
+
+      if (routingContainer) {
+
+        routingContainer.style.display = show ? 'none' : 'block';
+
+      }
+
+    }
+
+
+
+    document.getElementById("origin").addEventListener("input", () => toggleDirectionButton(true));
+
+    document.getElementById("destination").addEventListener("input", () => toggleDirectionButton(true));
+
+  </script>
 
 </body>
 
