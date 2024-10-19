@@ -404,7 +404,7 @@
         <div class="menu-btn" id="menuBtn">
             <div class="menu-btn__burger"></div>
         </div>
-        <div class="logo">TransportOptimize</div>
+        <div class="logo">              TransportOptimize</div>
     </nav>
 
     <div class="sidebar" id="sidebar">
@@ -470,14 +470,14 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>Contact Us</h3>
-                <p>Email: info@transportoptimize.com</p>
+                <p>Email: teamGHASA@transportoptimize.com</p>
                 <p>Phone: +1 (555) 123-4567</p>
             </div>
             <div class="footer-section">
                 <h3>Quick Links</h3>
                 <ul>
-                    <li><a href="/dasboard">Home</a></li>
-                    <li><a href="#services">co2</a></li>
+                    <li><a href="/">Login</a></li>
+                    <li><a href="{{ url_for('co2_prediction') }}">co2</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="/intex.html">Demand</a></li>
                 </ul>
@@ -492,7 +492,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2023 TransportOptimize. All rights reserved.</p>
+            <p>&copy; 2024 TransportOptimize. All rights reserved.</p>
         </div>
     </footer>
 
@@ -591,7 +591,8 @@
 
         // Redirect to index.html of ml.py when Submit is clicked
         document.querySelector('.submit-btn').addEventListener('click', function () {
-            const mlAppUrl = 'http://127.0.0.1:5002'; // Example: http://127.0.0.1:5000
+            //const mlAppUrl = 'http://127.0.0.1:5002';
+            const mlAppUrl = 'http://192.168.131.246:5002';
             window.location.href = mlAppUrl + '/';
         });
     </script>
