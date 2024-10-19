@@ -1,0 +1,194 @@
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle Maintenance Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      padding: 20px;
+      text-align: center;
+    }
+    .status {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      color: white;
+    }
+    .safe {
+      background-color: green;
+    }
+    .risk {
+      background-color: red;
+    }
+    .vehicle-info {
+      margin-top: 30px;
+    }
+    .sensor-level {
+      margin-top: 15px;
+      padding: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Vehicle Maintenance Dashboard</h1>
+  
+  <h2>Vehicle Information</h2>
+  <div class="vehicle-info">
+    <p id="car-id">Car ID: Loading...</p>
+    <p id="acceleration">Acceleration: Loading...</p>
+    <p id="brake-pressure">Brake Pressure: Loading...</p>
+    <p id="engineering-type">Engineering Type: Loading...</p>
+  </div>
+  
+  <h2>MQ135 Sensor</h2>
+  <div class="sensor-level">
+    <p id="sensor-reading">Sensor Reading: Loading...</p>
+    <div id="sensor-status" class="status">Status: Loading...</div>
+  </div>
+
+  <script>
+    // Firebase URL and Secret Key
+    const firebaseURL = "https://ml-transport-1-default-rtdb.firebaseio.com";
+    const secretKey = "ItQZCGVw8HvBMKM03oVJKRfZAWAi6112wUHIwdXkt";
+
+    // Function to fetch data from Firebase
+    function fetchData() {
+      fetch(`${firebaseURL}/vehicle_data.json?auth=${secretKey}`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("car-id").innerText = "Car ID: " + data["Car ID"];
+          document.getElementById("acceleration").innerText = "Acceleration: " + data["Acceleration"];
+          document.getElementById("brake-pressure").innerText = "Brake Pressure: " + data["Brake Pressure"];
+
+          // Sensor data
+          const sensor = data["MQ135_sensor"];
+          document.getElementById("sensor-reading").innerText = "Sensor Reading: " + sensor["reading"];
+          const statusDiv = document.getElementById("sensor-status");
+          statusDiv.innerText = "Status: " + sensor["status"];
+          
+          if (sensor["status"] === "safe") {
+            statusDiv.classList.add("safe");
+            statusDiv.classList.remove("risk");
+          } else {
+            statusDiv.classList.add("risk");
+            statusDiv.classList.remove("safe");
+          }
+        })
+        .catch(error => console.error("Error fetching data:", error));
+
+      // Fetch vehicle info
+      fetch(`${firebaseURL}/vehicle_info.json?auth=${secretKey}`)
+        .then(response => response.json())
+        .then(vehicleInfo => {
+          document.getElementById("engineering-type").innerText = "Engineering Type: " + vehicleInfo["engineering_type"];
+        })
+        .catch(error => console.error("Error fetching vehicle info:", error));
+    }
+
+    // Fetch data on page load
+    window.onload = fetchData;
+  </script>
+
+</body>
+</html>
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle Maintenance Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      padding: 20px;
+      text-align: center;
+    }
+    .status {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      color: white;
+    }
+    .safe {
+      background-color: green;
+    }
+    .risk {
+      background-color: red;
+    }
+    .vehicle-info {
+      margin-top: 30px;
+    }
+    .sensor-level {
+      margin-top: 15px;
+      padding: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Vehicle Maintenance Dashboard</h1>
+  
+  <h2>Vehicle Information</h2>
+  <div class="vehicle-info">
+    <p id="car-id">Car ID: Loading...</p>
+    <p id="acceleration">Acceleration: Loading...</p>
+    <p id="brake-pressure">Brake Pressure: Loading...</p>
+    <p id="engineering-type">Engineering Type: Loading...</p>
+    <p id="co2">CO2 PPM: Loading...</p>
+  </div>
+  
+  <h2>MQ135 Sensor</h2>
+  <div class="sensor-level">
+    <p id="sensor-reading">Sensor Reading: Loading...</p>
+    <div id="sensor-status" class="status">Status: Loading...</div>
+  </div>
+
+  <script>
+    const firebaseURL = "https://ml-transport-1-default-rtdb.firebaseio.com";
+    const secretKey = "ItQZCGVw8HvBMKM03oVJKRfZAWAi6112wUHIwdXkt";
+
+    function fetchData() {
+      fetch(`${firebaseURL}/vehicle_data.json?auth=${secretKey}`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("car-id").innerText = "Car ID: " + data["Car ID"];
+          document.getElementById("acceleration").innerText = "Acceleration: " + data["Acceleration"];
+          document.getElementById("brake-pressure").innerText = "Brake Pressure: " + data["Brake Pressure"];
+          document.getElementById("co2").innerText = "CO2 PPM: " + data["CO2 PPM"];
+          
+          const sensor = data["MQ135_sensor"];
+          document.getElementById("sensor-reading").innerText = "Sensor Reading: " + sensor["reading"];
+          const statusDiv = document.getElementById("sensor-status");
+          statusDiv.innerText = "Status: " + sensor["status"];
+          
+          if (sensor["status"] === "safe") {
+            statusDiv.classList.add("safe");
+            statusDiv.classList.remove("risk");
+          } else {
+            statusDiv.classList.add("risk");
+            statusDiv.classList.remove("safe");
+          }
+        })
+        .catch(error => console.error("Error fetching data:", error));
+
+      fetch(`${firebaseURL}/vehicle_info.json?auth=${secretKey}`)
+        .then(response => response.json())
+        .then(vehicleInfo => {
+          document.getElementById("engineering-type").innerText = "Engineering Type: " + vehicleInfo["engineering_type"];
+        })
+        .catch(error => console.error("Error fetching vehicle info:", error));
+    }
+
+    window.onload = fetchData;
+  </script>
+
+</body>
+</html>
